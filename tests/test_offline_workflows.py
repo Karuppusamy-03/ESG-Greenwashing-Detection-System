@@ -2012,22 +2012,26 @@ class OfflineWorkflowTests(unittest.TestCase):
         features["nli_entailment"] = None
 
         predictions = predict_risk_from_features(features)
-        self.assertGreaterEqual(predictions.iloc[0]["risk_score"], 0.0)
-        self.assertLessEqual(predictions.iloc[0]["risk_score"], 100.0)
+        # A missing NLI count and an invalid similarity are unassessed, not zero.
+        # The row must carry no score rather than a score built from missing values.
+        self.assertTrue(pd.isna(predictions.iloc[0]["risk_score"]))
+        self.assertEqual(predictions.iloc[0]["risk_score_status"], "NOT_PREDICTED")
         self.assertTrue(
             predictions["demonstration_risk_probability"].isna().all()
         )
-        self.assertIn(
+        self.assertEqual(
             predictions.iloc[0]["demonstration_risk_category"],
-            {"LOW", "MEDIUM", "HIGH"},
+            "NOT_PREDICTED",
         )
 
+        # An unassessed row is not explained, because there is no score to
+        # explain. The explainer returns [] for it (see test_risk_unavailable_states).
         explanations = explain_risk_predictions(
             predictions,
             None,
             "Offline Demo Company",
         )
-        self.assertTrue(explanations)
+        self.assertEqual(explanations, [])
         self.assertTrue(
             all(
                 row["company"] == "Offline Demo Company"
@@ -2036,8 +2040,6 @@ class OfflineWorkflowTests(unittest.TestCase):
                 for row in explanations
             )
         )
-        self.assertTrue(explanations[0]["explanation"])
-        self.assertNotIn("shap_value", explanations[0])
         self.assertEqual(explain_risk_predictions(pd.DataFrame(), None, "X"), [])
 
         with self.assertRaisesRegex(ValueError, "Missing explanation columns"):
