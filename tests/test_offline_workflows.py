@@ -1992,11 +1992,17 @@ class OfflineWorkflowTests(unittest.TestCase):
             "matches": [{
                 "matched_evidence": "The report discusses renewable electricity.",
                 "similarity": 0.42,
+                "source_url": "https://independent.example/report.pdf",
             }],
         }]
+        # NLI rows must carry their pair identity; coverage is attributed to
+        # matches through (claim, evidence, source_url).
         nli_results = [{
             "claim": matching_results[0]["claim"],
+            "evidence": "The report discusses renewable electricity.",
+            "source_url": "https://independent.example/report.pdf",
             "nli_result": "NEUTRAL",
+            "scoring_eligible": True,
         }]
         features = build_features_from_results(
             matching_results,

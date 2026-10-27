@@ -39,6 +39,10 @@ def _to_bool_flag(value):
 NLI_COLUMNS = ("nli_entailment", "nli_contradiction", "nli_neutral")
 
 NO_EVIDENCE_REASON = "No eligible external evidence matched this claim."
+NLI_PARTIAL_REASON = (
+    "Only some eligible evidence for this claim received a completed NLI "
+    "result, so the claim is unassessed rather than scored on partial evidence."
+)
 NLI_UNAVAILABLE_REASON = (
     "Evidence was found, but NLI verification did not produce a usable "
     "result, so the claim is unassessed."
@@ -55,6 +59,18 @@ def nli_result_missing(row):
         pd.isna(row.get(column)) if column in row else True
         for column in NLI_COLUMNS
     )
+
+
+def nli_coverage_incomplete(row):
+    """True when some eligible evidence pair for the claim has no completed NLI.
+
+    Older feature files lack the coverage column. For those rows this returns
+    False, so their behaviour is unchanged; they are not newly rejected.
+    """
+    if "nli_coverage_complete" not in row:
+        return False
+    value = pd.to_numeric(row.get("nli_coverage_complete"), errors="coerce")
+    return bool(pd.notna(value) and int(value) == 0)
 
 
 def _heuristic_risk_score(row):
@@ -75,6 +91,11 @@ def _heuristic_risk_score(row):
     # Evidence without a completed NLI result is unassessed. A completed run
     # with zero counts is a real outcome and is still scored below.
     if nli_result_missing(row):
+        return None
+
+    # Partial NLI coverage (D2): scoring on a subset of the eligible evidence
+    # would silently treat unassessed pairs as if they had been evaluated.
+    if nli_coverage_incomplete(row):
         return None
 
     if nli_contradiction > 0:
@@ -152,6 +173,11 @@ def predict_risk_from_features(features, model=None):
     result.loc[eligible & ~scored, "risk_unavailable_reason"] = (
         NLI_UNAVAILABLE_REASON
     )
+    if "nli_coverage_complete" in result.columns:
+        partial = eligible & ~scored & (
+            pd.to_numeric(result["nli_coverage_complete"], errors="coerce") == 0
+        ) & result[list(NLI_COLUMNS)].notna().any(axis=1)
+        result.loc[partial, "risk_unavailable_reason"] = NLI_PARTIAL_REASON
     result["predicted_risk_class"] = pd.Series(
         pd.NA,
         index=result.index,

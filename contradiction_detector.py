@@ -323,6 +323,8 @@ def detect_online_contradictions(data):
             results.append({
                 **pair,
                 "nli_result": "UNAVAILABLE",
+                "scoring_eligible": False,
+                "nli_failed": True,
                 "raw_nli_label": None,
                 "confidence": None,
                 "interpretation": (
@@ -341,6 +343,8 @@ def detect_online_contradictions(data):
             results.append({
                 **pair,
                 "nli_result": "UNAVAILABLE",
+                "scoring_eligible": False,
+                "nli_failed": True,
                 "raw_nli_label": None,
                 "confidence": None,
                 "interpretation": "The model did not return a usable label.",
@@ -363,6 +367,11 @@ def detect_online_contradictions(data):
         results.append({
             **pair,
             "nli_result": category,
+            # An UNAVAILABLE label is a failed NLI run, not a completed
+            # outcome: it is flagged so it cannot be counted as a zero-count
+            # result. The matched evidence itself remains available.
+            "scoring_eligible": category != "UNAVAILABLE",
+            "nli_failed": category == "UNAVAILABLE",
             "raw_nli_label": raw_label,
             "confidence": round(confidence, 4) if confidence is not None else None,
             "interpretation": (
