@@ -1,0 +1,43 @@
+{
+  "_note": "Synthetic saved-analysis fixture for offline dashboard tests. 'Example Corp' is fictional and the URLs use the reserved .test domain. Mirrors the keys written by app.py run_company_search. Not real company data.",
+  "company": "Example Corp",
+  "created_at": "2026-01-01T00:00:00+00:00",
+  "analysis_id": "synthetic0000000000000000000000000000",
+  "collection": {
+    "search_name": "Example Corp",
+    "documents": [
+      {
+        "status": "success",
+        "title": "Example Corp Sustainability Report 2024",
+        "source_url": "https://example-corp.test/sustainability-report-2024",
+        "final_url": "https://example-corp.test/sustainability-report-2024",
+        "text": "Example Corp reduced Scope 1 emissions by 12% in 2024 against a 2020 baseline."
+      }
+    ]
+  },
+  "relevant_document_count": 1,
+  "company_claims": [
+    {
+      "statement": "Example Corp reduced Scope 1 emissions by 12% in 2024 against a 2020 baseline.",
+      "source_role": "company_source",
+      "source_url": "https://example-corp.test/sustainability-report-2024"
+    }
+  ],
+  "external_evidence": [],
+  "all_statements": [
+    {
+      "statement": "Example Corp reduced Scope 1 emissions by 12% in 2024 against a 2020 baseline.",
+      "source_role": "company_source",
+      "source_url": "https://example-corp.test/sustainability-report-2024"
+    }
+  ],
+  "timeline_records": [],
+  "timeline_error": null,
+  "matching_results": [],
+  "nli_results": [],
+  "features": [],
+  "risk_error": null,
+  "risk_explanations": [],
+  "explainability_error": null,
+  "errors": {}
+}

@@ -1,0 +1,24 @@
+{
+  "_note": "Synthetic collection fixture for offline tests. 'Example Corp' is fictional and all URLs use the reserved .test domain. Not real collected data.",
+  "search_name": "Example Corp",
+  "documents": [
+    {
+      "status": "success",
+      "title": "Example Corp Sustainability Report 2024",
+      "source_url": "https://example-corp.test/report",
+      "final_url": "https://example-corp.test/report",
+      "source_domain": "example-corp.test",
+      "source_type": "Official company source",
+      "text": "Example Corp reduced Scope 1 emissions by 12% in 2024 against a 2020 baseline. The company is carbon neutral across operations."
+    },
+    {
+      "status": "success",
+      "title": "Independent review of Example Corp emissions",
+      "source_url": "https://independent-review.test/example-corp",
+      "final_url": "https://independent-review.test/example-corp",
+      "source_domain": "independent-review.test",
+      "source_type": "Other / unverified",
+      "text": "Example Corp reported emissions in 2024 that were 3% higher than in 2023, according to our independent analysis."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+streamlit
+pandas
+numpy
+scikit-learn
+xgboost
+shap
+transformers
+sentence-transformers
+torch
+pymupdf
+plotly
+ddgs
+requests
+truststore>=0.10,<1
+beautifulsoup4
+matplotlib
